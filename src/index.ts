@@ -26,6 +26,17 @@ const resolvers = {
     Review: {
         game: (parent) => games.find((game) => game.id === parent.game_id),
         author: (parent) => authors.find((author) => author.id === parent.author_id),
+    },
+
+    Mutation: {
+        deleteGame: (_, args) => {
+            return games.filter((game) => game.id !== args.id)
+        },
+        addGame: (_, args) => {
+            let newGame = { ...args.game, id: games.length + 1 }
+            games.push(newGame)
+            return newGame;
+        }
     }
 }
 
