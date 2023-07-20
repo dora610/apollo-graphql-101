@@ -6,7 +6,7 @@ import { typeDefs } from './schema.js'
 // db
 import db from './_db.js';
 
-const { games, authors, reviews } = db;
+let { games, authors, reviews } = db;
 
 const resolvers = {
     Query: {
@@ -36,6 +36,16 @@ const resolvers = {
             let newGame = { ...args.game, id: games.length + 1 }
             games.push(newGame)
             return newGame;
+        },
+        updateGame(_, args) {
+            games = games.map((game)=>{
+                if(game.id === args.id){
+                    return { ...game, ...args.edits }
+                }
+                return game
+            })
+
+            return games.find((g) => g.id === args.id)
         }
     }
 }
