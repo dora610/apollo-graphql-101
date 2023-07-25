@@ -63,7 +63,13 @@ const resolvers = {
 
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    formatError(formattedError, error) {
+        if(formattedError.extensions.code === 'BAD_USER_INPUT'){
+            return { ...formattedError, message: 'Id does not exists! Please try again.'}
+        }
+        return formattedError;
+    },
 })
 
 const { url } = await startStandaloneServer(server, {
