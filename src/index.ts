@@ -5,6 +5,7 @@ import { typeDefs } from './schema.js'
 
 // db
 import db from './_db.js';
+import { GraphQLError } from "graphql";
 
 let { games, authors, reviews } = db;
 
@@ -15,7 +16,17 @@ const resolvers = {
         games: ()=> games,
         game: (_, args) => games.find((game) => game.id === args.id),
         authors: ()=> authors,
-        author: (_, args) => authors.find((author) => author.id === args.id)
+        author: (_, args) => {
+            if(args.id < 1){
+                throw new GraphQLError('Invalid argument value', {
+                    extensions: {
+                        code : 'BAD_USER_INPUT',
+                        argumentName: 'id',
+                    }
+                })
+            }
+            return authors.find((author) => author.id === args.id)
+        }
     },
     Game: {
         reviews: (parent) => reviews.filter((review) => review.game_id === parent.id)
